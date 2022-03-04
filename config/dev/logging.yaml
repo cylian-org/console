@@ -1,0 +1,4 @@
+logging:
+  level: 0
+  format: "%(asctime)s [%(name)s@%(levelname)s] %(message)s"
+  date: "%Y-%m-%d %H:%M:%S"
