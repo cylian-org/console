@@ -1,0 +1,87 @@
+###
+### Global config
+###
+image: docker:git
+services:
+- docker:dind
+stages:
+- build
+- cascade
+
+###
+### Build @ gitlab.cylian.org
+###
+build:cylian.org:
+  stage: build
+  tags:
+  - docker
+  only:
+  - main
+
+  ### Prepare environment
+  before_script:
+
+  # Register variables
+  - export readonly PROJECT_VERSION=$(git describe --abbrev=0 --tags)
+  
+  # Install dependencies
+  - command -v envsubst || apk add gettext
+
+  # Generate dockerfile
+  - envsubst < Dockerfile.tmpl > Dockerfile
+  
+  # Login to docker
+  - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+
+  ### Build image
+  script:
+
+  # Build image
+  - docker build --pull --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}" --tag "${CI_REGISTRY_IMAGE}" .
+  - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+
+  ### Cleanup environment
+  after_script:
+
+  # Logout from docker
+  - docker logout
+
+###
+### Build @ hub.docker.com
+###
+build:docker.com:
+  stage: build
+  tags:
+  - docker
+  only:
+  - main
+  
+  ### Prepare environment
+  before_script:
+
+  # Register variables
+  - export readonly PROJECT_VERSION=$(git describe --abbrev=0 --tags)
+  - export readonly PROJECT_IMAGE="cylian/gitlab-builder-console"
+
+  # Install dependencies
+  - command -v envsubst || apk add gettext
+
+  # Generate dockerfile
+  - envsubst < Dockerfile.tmpl > Dockerfile
+  
+  # Login to docker
+  - echo "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+  - echo "${DOCKER_HUB_PASSWORD}"  | docker login --username "${DOCKER_HUB_USER}"  --password-stdin
+
+  ### Build image
+  script:
+
+  # Build image
+  - docker build --pull --tag "${PROJECT_IMAGE}:${PROJECT_VERSION}" --tag "${PROJECT_IMAGE}" .
+  - docker push --all-tags "${PROJECT_IMAGE}"
+
+  ### Cleanup environment
+  after_script:
+
+  # Logout from docker
+  - docker logout
