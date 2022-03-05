@@ -12,8 +12,6 @@ RUN apk add --no-cache \
     py3-yaml
 
 ### Install console
-COPY \
-    config/ \
-    core/ \
-    console.py \
-    /usr/local/console/
+COPY config/ /usr/local/console/config
+COPY core/ /usr/local/console/core
+COPY console.py /usr/local/console/
