@@ -27,7 +27,7 @@ class Command(object):
 ### call module
 ###
 def call(name, args):
-    logging.info("> %s %s" % (name, args))
+    logging.debug("> %s %s" % (name, args))
 
     # Update module path
     sys.path.append(PATH_CONSOLE)
