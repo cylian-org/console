@@ -15,8 +15,6 @@ build:cylian.org:
   stage: build
   tags:
   - docker
-  only:
-  - main
 
   ### Prepare environment
   before_script:
