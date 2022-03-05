@@ -2,6 +2,10 @@ import glob
 import os
 import yaml
 
+###
+### Constants
+###
+
 DOT_SEPARATOR = '.'
 
 ENVIRONMENT_SEPARATOR = "__"
@@ -20,13 +24,8 @@ def _merge(a, b, path=None):
     if path is None:
         path = []
     for key in b:
-        if key in a:
-            if isinstance(a[key], dict) and isinstance(b[key], dict):
-                _merge(a[key], b[key], path + [str(key)])
-            elif a[key] == b[key]:
-                pass # same leaf value
-            else:
-                raise Exception('Conflict at %s' % '.'.join(path + [str(key)]))
+        if key in a and isinstance(a[key], dict) and isinstance(b[key], dict):
+            _merge(a[key], b[key], path + [str(key)])
         else:
             a[key] = b[key]
     return a
@@ -36,11 +35,7 @@ def _merge(a, b, path=None):
 ###
 
 def init():
-
-    ### Load environment variables
-    for (k,v) in os.environ.items():
-        if k.startswith(ENVIRONMENT_PREFIX):
-            set(k[len(ENVIRONMENT_PREFIX):].lower().replace(ENVIRONMENT_SEPARATOR,DOT_SEPARATOR), v)
+    """Init config module"""
 
     ### Load default config files
     for file in glob.glob(os.path.join("config", '*.yaml')):
@@ -49,6 +44,11 @@ def init():
     ### Load environment specific config files
     for file in glob.glob(os.path.join("config", getOrElse('env', 'default'), '*.yaml')):
         load(file)
+
+    ### Load environment variables
+    for (k,v) in os.environ.items():
+        if k.startswith(ENVIRONMENT_PREFIX):
+            set(k[len(ENVIRONMENT_PREFIX):].lower().replace(ENVIRONMENT_SEPARATOR,DOT_SEPARATOR), v)
 
 ###
 ### Set config data
@@ -105,4 +105,4 @@ def getOrElse(key, otherwise=None):
 ###
 
 def dump():
-    print(_config)
+    print(yaml.dump(_config))

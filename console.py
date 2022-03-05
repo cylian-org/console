@@ -7,8 +7,29 @@ import logging
 import os
 import sys
 
-PATH_CONSOLE = os.path.join("core","console")
-PATH_LIBRARY = os.path.join("core","lib")
+###
+### Constants
+###
+
+### System
+CONSOLE_SYSTEM_PATH = [
+    os.path.abspath(os.path.join('console')),
+    os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),'core','lib')),
+]
+
+### Logging
+CONSOLE_LOGGING_LEVEL_KEY = 'logging.level'
+CONSOLE_LOGGING_LEVEL_DEF = logging.INFO
+CONSOLE_LOGGING_FORMAT_KEY = 'logging.format'
+CONSOLE_LOGGING_FORMAT_DEF = '[%(name)s@%(levelname)s] %(message)s'
+CONSOLE_LOGGING_DATE_KEY = 'logging.date'
+CONSOLE_LOGGING_DATE_DEF = None
+
+### Module
+CONSOLE_MODULE_DEFAULT_SEPARATOR = '.'
+CONSOLE_MODULE_DEFAULT_SUFFIX = CONSOLE_MODULE_DEFAULT_SEPARATOR + 'main'
+CONSOLE_MODULE_DEFAULT_CMD = 'help' + CONSOLE_MODULE_DEFAULT_SUFFIX
+CONSOLE_MODULE_DEFAULT_ARG = []
 
 ###
 ### Command class
@@ -27,10 +48,7 @@ class Command(object):
 ### call module
 ###
 def call(name, args):
-    logging.info("> %s %s" % (name, args))
-
-    # Update module path
-    sys.path.append(PATH_CONSOLE)
+    logging.debug("> %s %s" % (name, args))
 
     # Import module
     module = importlib.import_module(name)
@@ -52,28 +70,32 @@ def call(name, args):
 ###
 if __name__ == "__main__":
 
-    # Add lib module path
-    sys.path.append(PATH_LIBRARY)
+    # Update system path
+    for path in CONSOLE_SYSTEM_PATH:
+        if os.path.isdir(path):
+            sys.path.append(path)
 
-    #
-    # Load project config
-    #
+    ### Load project config
     import config
     config.init()
 
-    #
-    # Configure logging
-    #
-    _logLevel = int( config.getOrElse("logging.level", logging.INFO) )
-    _logFormat = config.getOrElse("logging.format", "[%(name)s@%(levelname)s] %(message)s")
-    _logDate = config.getOrElse("logging.date", None)
+    ### Configure logging
+    _logLevel = int( config.getOrElse(CONSOLE_LOGGING_LEVEL_KEY, CONSOLE_LOGGING_LEVEL_DEF) )
+    _logFormat = config.getOrElse(CONSOLE_LOGGING_FORMAT_KEY, CONSOLE_LOGGING_FORMAT_DEF)
+    _logDate = config.getOrElse(CONSOLE_LOGGING_DATE_KEY, CONSOLE_LOGGING_DATE_DEF)
     logging.basicConfig(level=_logLevel, format=_logFormat, datefmt=_logDate)
 
-    #
-    # Notify user
-    # 
-    logging.debug("console: %s" % PATH_CONSOLE)
-    logging.debug("library: %s" % PATH_LIBRARY)
+    ### Notify user
+    if logging.getLogger().isEnabledFor(logging.DEBUG):
+
+        # Dump library path
+        logging.debug("Python library path:")
+        for path in sys.path:
+            logging.debug("- %s" % path)
+
+        # Dump config
+        logging.debug("Console config:")
+        config.dump()
 
     #
     # call command
@@ -82,12 +104,12 @@ if __name__ == "__main__":
         module = sys.argv[1]
         args = sys.argv[2:]
     else:
-        module = "help"
-        args = []
+        module = CONSOLE_MODULE_DEFAULT_CMD
+        args = CONSOLE_MODULE_DEFAULT_ARG
 
     # IF module IS in simple notation.
-    if module.find('.') < 0:
-        module += '.main'
+    if module.find(CONSOLE_MODULE_DEFAULT_SEPARATOR) < 0:
+        module += CONSOLE_MODULE_DEFAULT_SUFFIX
     
     # Call module
     call(name=module, args=args)
