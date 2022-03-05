@@ -6,4 +6,4 @@ class Command(Command):
 
     def execute(self, input, output):
 
-        output.debug("Launched")
+        output.info("Launched")
