@@ -1,6 +1,18 @@
 ###
 ### Console
 ###
+FROM alpine:latest as console
+
+COPY config/ /usr/local/console/config
+COPY core/ /usr/local/console/core
+COPY console.py /usr/local/console/
+
+RUN chmod 755 /usr/local/console/console.py
+RUN ln -s /usr/local/console/console.py /usr/local/bin/console
+
+###
+### Image
+###
 FROM alpine:latest
 
 ### Maintener
@@ -12,6 +24,7 @@ RUN apk add --no-cache \
     py3-yaml
 
 ### Install console
-COPY config/ /usr/local/console/config
-COPY core/ /usr/local/console/core
-COPY console.py /usr/local/console/
+COPY --from=console \
+    /usr/local/console \
+    /usr/local/bin/console \
+    /
