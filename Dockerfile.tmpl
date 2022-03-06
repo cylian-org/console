@@ -3,12 +3,11 @@
 ###
 FROM alpine:latest as console
 
-COPY config/ /usr/local/console/config
-COPY core/ /usr/local/console/core
-COPY console.py /usr/local/console/
+COPY config/ /opt/config
+COPY core/ /opt/core
+COPY console.py /opt/
 
-RUN chmod 755 /usr/local/console/console.py
-RUN ln -s /usr/local/console/console.py /usr/local/bin/console
+RUN chmod 755 /opt/console.py
 
 ###
 ### Image
@@ -18,14 +17,15 @@ FROM alpine:latest
 ### Maintener
 LABEL maintainer="Cylian Lab <contact+docker@cylian.org>"
 
-### Install tools
-RUN apk add --no-cache \
-    python3 \
-    py3-yaml
-
 ### Install console
-COPY --from=console /usr/local/console /usr/local
-COPY --from=console /usr/local/bin/console /usr/local/bin
+COPY --from=console /opt /usr/local/console
+
+### Install tools
+RUN ln -f -s /usr/local/console/console.py /usr/local/bin/console && \
+    chmod 755 /usr/local/console/*.py && \
+    apk add --no-cache \
+        python3 \
+        py3-yaml
 
 ### Entrypoint
 # ENTRYPOINT [ "/usr/local/console/console.py" ]
