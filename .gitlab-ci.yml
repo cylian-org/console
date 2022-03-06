@@ -28,12 +28,13 @@ build:cylian.org:
     for dockerfile in Dockerfile.* ; do
       export PROJECT_FLAVOUR=${dockerfile##*.}
       envsubst < ${dockerfile} > Dockerfile
+      echo "Building flavour=${PROJECT_FLAVOUR} version=${PROJECT_VERSION}"
       docker build --pull \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_FLAVOUR}" \
         .
-      docker push --all-tags "${CI_REGISTRY_IMAGE}"
     done
+  - docker push --all-tags "${CI_REGISTRY_IMAGE}"
 
   ### Cleanup environment
   after_script:
@@ -63,12 +64,13 @@ build:docker.com:
     for dockerfile in Dockerfile.* ; do
       export PROJECT_FLAVOUR=${dockerfile##*.}
       envsubst < ${dockerfile} > Dockerfile
+      echo "Building flavour=${PROJECT_FLAVOUR} version=${PROJECT_VERSION}"
       docker build --pull \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_FLAVOUR}" \
         .
-      docker push --all-tags "${CI_REGISTRY_IMAGE}"
     done
+  - docker push --all-tags "${CI_REGISTRY_IMAGE}"
 
   ### Cleanup environment
   after_script:
