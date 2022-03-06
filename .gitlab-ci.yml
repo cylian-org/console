@@ -42,7 +42,7 @@ build:cylian.org:
   after_script:
 
   # Logout from docker
-  - docker logout
+  - docker logout "${CI_REGISTRY}"
 
 ###
 ### Build @ hub.docker.com
@@ -83,3 +83,4 @@ build:docker.com:
 
   # Logout from docker
   - docker logout
+  - docker logout "${CI_REGISTRY}"
