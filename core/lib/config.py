@@ -1,5 +1,6 @@
 import glob
 import os
+import sys
 import yaml
 
 ###
@@ -8,8 +9,8 @@ import yaml
 
 DOT_SEPARATOR = '.'
 
-ENVIRONMENT_SEPARATOR = "__"
-ENVIRONMENT_PREFIX = "CONSOLE" + ENVIRONMENT_SEPARATOR
+ENVIRONMENT_SEPARATOR = '__'
+ENVIRONMENT_PREFIX = 'CONSOLE' + ENVIRONMENT_SEPARATOR
 
 _config = {}
 
@@ -18,9 +19,7 @@ _config = {}
 ###
 
 def _merge(a, b, path=None):
-    """
-    Merges b into a
-    """
+    """Merges b into a"""
     if path is None:
         path = []
     for key in b:
@@ -37,12 +36,16 @@ def _merge(a, b, path=None):
 def init():
     """Init config module"""
 
+    ### Load console config files
+    for file in glob.glob(os.path.join(os.path.dirname(sys.argv[0]),'config', '*.yaml')):
+        load(file)
+
     ### Load default config files
-    for file in glob.glob(os.path.join("config", '*.yaml')):
+    for file in glob.glob(os.path.join('config', '*.yaml')):
         load(file)
 
     ### Load environment specific config files
-    for file in glob.glob(os.path.join("config", getOrElse('env', 'default'), '*.yaml')):
+    for file in glob.glob(os.path.join('config', getOrElse('env', 'default'), '*.yaml')):
         load(file)
 
     ### Load environment variables
