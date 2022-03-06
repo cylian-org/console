@@ -66,11 +66,11 @@ build:docker.com:
       envsubst < ${dockerfile} > Dockerfile
       echo "Building flavour=${PROJECT_FLAVOUR} version=${PROJECT_VERSION}"
       docker build --pull \
-        --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
-        --tag "${CI_REGISTRY_IMAGE}:${PROJECT_FLAVOUR}" \
+        --tag "${PROJECT_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
+        --tag "${PROJECT_IMAGE}:${PROJECT_FLAVOUR}" \
         .
     done
-  - docker push --all-tags "${CI_REGISTRY_IMAGE}"
+  - docker push --all-tags "${PROJECT_IMAGE}"
 
   ### Cleanup environment
   after_script:
