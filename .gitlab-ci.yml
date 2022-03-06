@@ -30,9 +30,7 @@ build:cylian.org:
       envsubst < ${dockerfile} > Dockerfile
       docker build --pull \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
-        --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}" \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_FLAVOUR}" \
-        --tag "${CI_REGISTRY_IMAGE}" \
         .
       docker push --all-tags "${CI_REGISTRY_IMAGE}"
     done
@@ -67,9 +65,7 @@ build:docker.com:
       envsubst < ${dockerfile} > Dockerfile
       docker build --pull \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}-${PROJECT_FLAVOUR}" \
-        --tag "${CI_REGISTRY_IMAGE}:${PROJECT_VERSION}" \
         --tag "${CI_REGISTRY_IMAGE}:${PROJECT_FLAVOUR}" \
-        --tag "${CI_REGISTRY_IMAGE}" \
         .
       docker push --all-tags "${CI_REGISTRY_IMAGE}"
     done
