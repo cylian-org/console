@@ -84,8 +84,6 @@ cascade:cylian.org:
   stage: cascade
   tags:
   - alpine
-  needs:
-  - build:cylian.org
   only:
   - main
 
