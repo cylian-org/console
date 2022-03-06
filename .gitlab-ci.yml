@@ -76,3 +76,25 @@ build:docker.com:
   after_script:
   - docker logout
   - docker logout "${CI_REGISTRY}"
+
+###
+### Cascase
+###
+cascade:cylian.org:
+  stage: cascade
+  tags:
+  - alpine
+  needs:
+  - build:cylian.org
+  only:
+  - main
+
+  ### Prepare environment
+  before_script:
+  - command -v curl || apk add --no-cache curl
+
+  ### Cascade builds image
+  script:
+
+  # [118] gitlab-builder/console
+  - curl -s -X POST -F token=${CI_JOB_TOKEN} -F ref=${CI_COMMIT_REF_NAME} https://gitlab.cylian.org/api/v4/projects/118/trigger/pipeline
