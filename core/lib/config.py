@@ -38,14 +38,14 @@ def _merge(a, b, path=None):
 def init():
     """Init config module"""
 
+    ### Load console config files
+    for file in glob.glob(os.path.join(CONSOLE_SYSTEM_BASE,'config', '*.yaml')):
+        load(file)
+
     ### Load environment variables
     for (k,v) in os.environ.items():
         if k.startswith(ENVIRONMENT_PREFIX):
             set(k[len(ENVIRONMENT_PREFIX):].lower().replace(ENVIRONMENT_SEPARATOR,DOT_SEPARATOR), v)
-
-    ### Load console config files
-    for file in glob.glob(os.path.join(CONSOLE_SYSTEM_BASE,'config', '*.yaml')):
-        load(file)
 
     ### Load default config files
     for file in glob.glob(os.path.join('config', '*.yaml')):
