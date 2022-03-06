@@ -25,8 +25,7 @@ build:cylian.org:
   ### Build image
   script:
   - >
-    for dockerfile in Dockerfile.*
-    do
+    for dockerfile in Dockerfile.* ; do
       export PROJECT_FLAVOUR=${dockerfile##*.}
       envsubst < ${dockerfile} > Dockerfile
       docker build --pull \
@@ -63,8 +62,7 @@ build:docker.com:
   ### Build image
   script:
   - >
-    for dockerfile in Dockerfile.*
-    do
+    for dockerfile in Dockerfile.* ; do
       export PROJECT_FLAVOUR=${dockerfile##*.}
       envsubst < ${dockerfile} > Dockerfile
       docker build --pull \
