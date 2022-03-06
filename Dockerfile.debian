@@ -1,0 +1,36 @@
+###
+### Console
+###
+FROM alpine:latest as console
+
+COPY config/ /opt/config
+COPY core/ /opt/core
+COPY console.py /opt/
+
+RUN chmod 755 /opt/console.py
+
+###
+### Image
+###
+FROM debian:stable-slim
+
+### Maintener
+LABEL maintainer="Cylian Lab <contact+docker@cylian.org>"
+
+### Environment variables
+ENV CONSOLE__BASE "/usr/local/console"
+
+### Install console
+COPY --from=console /opt /usr/local/console
+
+### Install tools
+RUN ln -f -s /usr/local/console/console.py /usr/local/bin/console && \
+    apt-get update && \
+    apt-get --yes --quiet --no-install-recommends --no-install-suggests \
+        python3 \
+        python3-yaml ;\
+    apt-get clean
+
+### Entrypoint
+# ENTRYPOINT [ "/usr/local/console/console.py" ]
+CMD [ "/usr/local/console/console.py", "help" ]
