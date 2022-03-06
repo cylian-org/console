@@ -24,7 +24,9 @@ RUN apk add --no-cache \
     py3-yaml
 
 ### Install console
-COPY --from=console \
-    /usr/local/console \
-    /usr/local/bin/console \
-    /
+COPY --from=console /usr/local/console /usr/local
+COPY --from=console /usr/local/bin/console /usr/local/bin
+
+### Entrypoint
+ENTRYPOINT [ "/usr/local/console/console.py" ]
+CMD [ "help" ]
