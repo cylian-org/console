@@ -9,10 +9,14 @@ import sys
 ### Constants
 ###
 
+### Config
+CONSOLE_CONFIG_BASE_KEY = 'CONSOLE__BASE'
+
 ### System
+CONSOLE_SYSTEM_BASE = os.getenv(CONSOLE_CONFIG_BASE_KEY, os.path.dirname(sys.argv[0]))
 CONSOLE_SYSTEM_PATH = [
     os.path.abspath(os.path.join('console')),
-    os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]),'core','lib')),
+    os.path.abspath(os.path.join(CONSOLE_SYSTEM_BASE,'core','lib')),
 ]
 
 ### Logging

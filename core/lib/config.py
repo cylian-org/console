@@ -3,6 +3,8 @@ import os
 import sys
 import yaml
 
+from console import CONSOLE_SYSTEM_BASE
+
 ###
 ### Constants
 ###
@@ -37,7 +39,7 @@ def init():
     """Init config module"""
 
     ### Load console config files
-    for file in glob.glob(os.path.join(os.path.dirname(sys.argv[0]),'config', '*.yaml')):
+    for file in glob.glob(os.path.join(CONSOLE_SYSTEM_BASE,'config', '*.yaml')):
         load(file)
 
     ### Load default config files

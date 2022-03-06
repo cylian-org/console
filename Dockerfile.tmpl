@@ -17,12 +17,14 @@ FROM alpine:latest
 ### Maintener
 LABEL maintainer="Cylian Lab <contact+docker@cylian.org>"
 
+### Environment variables
+ENV CONSOLE__BASE "/usr/local/console"
+
 ### Install console
 COPY --from=console /opt /usr/local/console
 
 ### Install tools
 RUN ln -f -s /usr/local/console/console.py /usr/local/bin/console && \
-    chmod 755 /usr/local/console/*.py && \
     apk add --no-cache \
         python3 \
         py3-yaml
